@@ -1,0 +1,83 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web1
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: web1
+  template:
+    metadata:
+      labels:
+        app: web1
+    spec:
+      containers:
+      - name: web1
+        image: nginx:latest
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: logs
+          mountPath: /var/log/nginx
+      volumes:
+      - name: logs
+        emptyDir: {}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: web1-service
+spec:
+  selector:
+    app: web1
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+      nodePort: 30001
+  type: NodePort
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web2
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: web2
+  template:
+    metadata:
+      labels:
+        app: web2
+    spec:
+      containers:
+      - name: web2
+        image: httpd:latest
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: logs
+          mountPath: /var/log/apache2
+      volumes:
+      - name: logs
+        emptyDir: {}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: web2-service
+spec:
+  selector:
+    app: web2
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+      nodePort: 30002
+  type: NodePort
+

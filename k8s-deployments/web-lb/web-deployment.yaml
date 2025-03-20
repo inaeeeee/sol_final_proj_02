@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: web-deployment
-  namespace: default
+  namespace: solmakase
   labels:
     app: web
 spec:
